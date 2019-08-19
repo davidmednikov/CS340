@@ -1,0 +1,393 @@
+-- Data Definition Queries for the Flights database for the Project
+-- By David Mednikov
+
+--
+-- Table Structure for Table 'Country'
+--
+CREATE TABLE Country (
+  id int NOT NULL AUTO_INCREMENT,
+  name varchar(255) NOT NULL,
+  capital varchar(255) NOT NULL,
+  PRIMARY KEY (name),
+  UNIQUE KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table Structure for Table 'Airport'
+--
+CREATE TABLE Airport (
+  id int NOT NULL AUTO_INCREMENT,
+  code varchar(3) NOT NULL,
+  name varchar(255) NOT NULL,
+  city varchar(255) NOT NULL,
+  country varchar(255) NOT NULL,
+  PRIMARY KEY(code),
+  UNIQUE KEY(id),
+  CONSTRAINT FK_AirportCountry FOREIGN KEY(country) REFERENCES Country(name)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Table Structure for Table 'Airline'
+--
+CREATE TABLE Airline (
+  id int NOT NULL AUTO_INCREMENT,
+  code varchar(2) NOT NULL,
+  name varchar(255) NOT NULL,
+  country varchar(255) NOT NULL,
+  PRIMARY KEY(code),
+  UNIQUE KEY(id),
+  CONSTRAINT FK_AirlineCountry FOREIGN KEY(country) REFERENCES Country(name)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Table Structure for Table 'Flight'
+--
+CREATE TABLE Flight (
+  id int NOT NULL AUTO_INCREMENT,
+  airline varchar(2) NOT NULL,
+  flightNum int NOT NULL,
+  origin varchar(3) NOT NULL,
+  destination varchar(3) NOT NULL,
+  departTime varchar(13) NOT NULL,
+  arriveTime varchar(13) NOT NULL,
+  flightTime TIME NOT NULL,
+  PRIMARY KEY(id),
+  CONSTRAINT FK_FlightAirline FOREIGN KEY(airline) REFERENCES Airline(code),
+  CONSTRAINT FK_FlightOrigin FOREIGN KEY(origin) REFERENCES Airport(code),
+  CONSTRAINT FK_FlightDestination FOREIGN KEY(destination) REFERENCES Airport(code)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Table Structure for Table 'Destination'
+--
+CREATE TABLE Destination (
+  id int NOT NULL AUTO_INCREMENT,
+  airline varchar(2) NOT NULL,
+  destination varchar(3) NOT NULL,
+  PRIMARY KEY(id),
+  CONSTRAINT FK_DestinationAirline FOREIGN KEY(airline) REFERENCES Airline(code),
+  CONSTRAINT FK_DestinationDestination FOREIGN KEY(destination) REFERENCES Airport(code)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Dump Data into 'Country' Table
+--
+INSERT INTO Country (name, capital) VALUES
+('China', 'Beijing'),
+('France', 'Paris'),
+('Japan', 'Tokyo'),
+('Netherlands', 'Amsterdam'),
+('New Zealand', 'Wellington'),
+('Norway', 'Oslo'),
+('United Kingdom', 'London'),
+('United States', 'Washington, D.C.');
+
+
+
+
+--
+-- Dump Data into 'Airport' Table
+--
+INSERT INTO Airport (code, name, city, country) VALUES
+('AMS', 'Amsterdam Airport Schiphol',	'Amsterdam',	'Netherlands'),
+('ATL', 'Hartsfield-Jackson Atlanta International Airport', 'Atlanta', 'United States'),
+('CDG', 'Paris Charles de Gaulle Airport', 'Paris', 'France'),
+('HND', 'Tokyo Haneda Airport', 'Tokyo', 'Japan'),
+('JFK', 'John F. Kennedy International Airport', 'New York City', 'United States'),
+('LAX', 'Los Angeles International Airport', 'Los Angeles', 'United States'),
+('LHR', 'London Heathrow Airport', 'London', 'United Kingdom'),
+('ORD', "Chicago O'Hare International Airport", 'Chicago', 'United States'),
+('PEK', 'Beijing Capital International Airport', 'Beijing', 'China');
+
+
+--
+-- Dump Data into 'Airport' Table
+--
+INSERT INTO Airline (code, name, country) VALUES
+('CA', 'Air China', 'China'),
+('AF', 'Air France', 'France'),
+('NZ', 'Air New Zealand', 'New Zealand'),
+('TN', 'Air Tahiti Nui', 'France'),
+('AS', 'Alaska Airlines', 'United States'),
+('NH', 'All Nippon Airways (ANA)', 'Japan'),
+('AA', 'American Airlines', 'United States'),
+('BA', 'British Airways', 'United Kingdom'),
+('CZ', 'China Southern Airlines', 'China'),
+('DL', 'Delta Air Lines', 'United States'),
+('HU', 'Hainan Airlines', 'China'),
+('JL', 'Japan Airlines', 'Japan'),
+('B6', 'JetBlue Airways', 'United States'),
+('KL', 'KLM Royal Dutch Airlines', 'Netherlands'),
+('DY', 'Norwegian Air Shuttle', 'Norway'),
+('WN', 'Southwest Airlines', 'United States'),
+('NK', 'Spirit Airlines', 'United States'),
+('UA', 'United Airlines', 'United States'),
+('VS', 'Virgin Atlantic Airways', 'United Kingdom'),
+('SE', 'XL Airways France', 'France');
+
+
+--
+-- Dump Data into 'Flight' Table
+--
+INSERT INTO Flight (airline, origin, destination, flightNum, departTime, arriveTime, flightTime) VALUES
+('CA', 'CDG', 'PEK', 934, '8:20 PM CEST', '12:25 PM CST', '10:05'),
+('CA', 'HND', 'PEK', 182, '1:55 PM JST', '4:45 PM CST', '3:50'),
+('CA', 'JFK', 'PEK', 982, '4:50 PM EST', '6:20 PM CST', '13:30'),
+('CA', 'LAX', 'PEK', 984, '1:40 AM PST', '5:20 AM CST', '12:40'),
+('CA', 'LHR', 'PEK', 938, '8:25 PM GMT', '1:05 PM CST', '9:40'),
+('CA', 'PEK', 'CDG', 933, '1:35 PM CST', '6:40 PM CEST', '11:05'),
+('CA', 'PEK', 'HND', 167, '12:50 PM CST', '5:25 PM JST', '3:35'),
+('CA', 'PEK', 'JFK', 981, '1:00 PM CST', '2:20 PM EST', '13:20'),
+('CA', 'PEK', 'LAX', 983, '9:00 PM CST', '6:00 PM PST', '12:00'),
+('CA', 'PEK', 'LHR', 937, '2:10 PM CST', '5:45 PM GMT', '10:35'),
+('AF', 'AMS', 'CDG', 1341, '10:35 AM CEST', '11:55 AM CEST', '1:20'),
+('AF', 'ATL', 'CDG', 681, '5:15 PM EST', '7:40 AM CEST', '8:25'),
+('AF', 'CDG', 'AMS', 1440, '6:00 PM CEST', '7:15 PM CEST', '1:15'),
+('AF', 'CDG', 'ATL', 688, '1:50 PM CEST', '5:15 PM EST', '9:25'),
+('AF', 'CDG', 'HND', 272, '5:20 PM CEST', '12:15 PM JST', '11:55'),
+('AF', 'CDG', 'JFK', 6, '1:35 PM CEST', '4:00 PM EST', '8:25'),
+('AF', 'CDG', 'LAX', 66, '10:20 AM CEST', '12:50 PM PST', '11:30'),
+('AF', 'CDG', 'LHR', 1280, '4:00 PM CEST', '4:25 PM GMT', '1:25'),
+('AF', 'CDG', 'ORD', 144, '10:10 AM CEST', '12:30 PM CST', '9:20'),
+('AF', 'CDG', 'PEK', 382, '11:20 PM CEST', '3:20 PM CST', '10:00'),
+('AF', 'HND', 'CDG', 279, '2:00 PM JST', '7:30 PM CEST', '12:30'),
+('AF', 'JFK', 'CDG', 9, '11:25 PM EST', '12:55 PM CEST', '7:30'),
+('AF', 'LAX', 'CDG', 65, '3:15 PM PST', '11:05 PM CEST', '10:50'),
+('AF', 'LHR', 'CDG', 1281, '5:35 PM GMT', '7:50 PM CEST', '1:15'),
+('AF', 'ORD', 'CDG', 137, '5:20 PM CST', '8:40 AM CEST', '8:20'),
+('AF', 'PEK', 'CDG', 125, '9:05 AM CST', '2:00 PM CEST', '10:55'),
+('NZ', 'LAX', 'LHR', 2, '5:15 PM PST', '11:45 AM GMT', '10:30'),
+('NZ', 'LHR', 'LAX', 1, '4:15 PM GMT', '7:25 PM PST', '11:10'),
+('TN', 'CDG', 'LAX', 7, '11:35 AM CEST', '2:25 PM PST', '11:50'),
+('TN', 'LAX', 'CDG', 8, '1:20 PM PST', '9:20 AM CEST', '11:00'),
+('AS', 'JFK', 'LAX', 1411, '1:00 PM EST', '4:12 PM PST', '6:12'),
+('AS', 'LAX', 'JFK', 1418, '9:17 PM PST', '5:41 AM EST', '5:24'),
+('AS', 'LAX', 'ORD', 1232, '11:45 AM PST', '5:52 PM CST', '4:07'),
+('AS', 'ORD', 'LAX', 1241, '6:55 PM CST', '9:27 PM PST', '4:32'),
+('NH', 'CDG', 'HND', 216, '8:00 PM CEST', '2:45 PM JST', '11:45'),
+('NH', 'HND', 'CDG', 215, '11:45 AM JST', '5:10 PM CEST', '12:25'),
+('NH', 'HND', 'LAX', 106, '10:55 PM JST', '4:45 PM PST', '9:50'),
+('NH', 'HND', 'LHR', 211, '11:35 AM JST', '4:10 PM GMT', '12:35'),
+('NH', 'HND', 'PEK', 963, '5:20 PM JST', '8:10 PM CST', '3:50'),
+('NH', 'LAX', 'HND', 105, '12:50 AM PST', '5:00 AM JST', '12:10'),
+('NH', 'LHR', 'HND', 212, '7:00 PM GMT', '2:40 PM JST', '11:40'),
+('NH', 'PEK', 'HND', 962, '3:20 PM CST', '7:45 PM JST', '3:25'),
+('AA', 'ATL', 'LAX', 1249, '4:53 PM EST', '7:00 PM PST', '5:07'),
+('AA', 'CDG', 'JFK', 45, '10:40 AM CEST', '1:10 PM EST', '8:30'),
+('AA', 'CDG', 'ORD', 151, '12:10 PM CEST', '2:15 PM CST', '9:05'),
+('AA', 'HND', 'LAX', 26, '4:25 PM JST', '10:50 AM PST', '10:25'),
+('AA', 'JFK', 'CDG', 44, '6:05 PM EST', '7:45 AM CEST', '7:40'),
+('AA', 'JFK', 'LAX', 1, '8:00 AM EST', '11:40 AM PST', '6:40'),
+('AA', 'JFK', 'LHR', 106, '7:45 PM EST', '8:10 AM GMT', '7:25'),
+('AA', 'JFK', 'ORD', 1257, '5:05 PM EST', '7:06 PM CST', '3:01'),
+('AA', 'LAX', 'ATL', 1116, '11:05 PM PST', '6:28 AM EST', '4:23'),
+('AA', 'LAX', 'HND', 27, '10:25 AM PST', '2:25 PM JST', '12:00'),
+('AA', 'LAX', 'JFK', 2, '9:00 AM PST', '5:48 PM EST', '5:48'),
+('AA', 'LAX', 'LHR', 136, '7:40 PM PST', '2:25 PM GMT', '10:45'),
+('AA', 'LAX', 'ORD', 219, '11:45 PM PST', '5:52 AM CST', '4:07'),
+('AA', 'LAX', 'PEK', 181, '10:00 AM PST', '2:00 PM CST', '13:00'),
+('AA', 'LHR', 'JFK', 107, '5:00 PM GMT', '7:55 PM EST', '7:55'),
+('AA', 'LHR', 'LAX', 109, '12:15 PM GMT', '3:40 PM PST', '11:25'),
+('AA', 'LHR', 'ORD', 87, '12:15 PM GMT', '3:00 PM CST', '8:45'),
+('AA', 'ORD', 'CDG', 150, '7:00 PM CST', '10:05 AM CEST', '8:05'),
+('AA', 'ORD', 'JFK', 130, '12:09 PM CST', '3:29 PM EST', '2:20'),
+('AA', 'ORD', 'LAX', 2223, '1:25 PM CST', '3:56 PM PST', '4:31'),
+('AA', 'ORD', 'LHR', 86, '5:00 PM CST', '6:50 AM GMT', '7:50'),
+('AA', 'ORD', 'PEK', 187, '6:00 PM CST', '8:20 PM CST', '13:20'),
+('AA', 'PEK', 'LAX', 180, '5:20 PM CST', '3:05 PM PST', '12:45'),
+('AA', 'PEK', 'ORD', 187, '10:10 AM CST', '10:00 AM CST', '12:50'),
+('BA', 'AMS', 'LHR', 439, '4:10 PM CEST', '4:30 PM GMT', '1:20'),
+('BA', 'ATL', 'LHR', 226, '10:15 PM EST', '11:25 AM GMT', '8:10'),
+('BA', 'CDG', 'LHR', 323, '6:15 PM CEST', '6:25 PM GMT', '1:10'),
+('BA', 'HND', 'LHR', 8, '8:50 AM JST', '1:10 PM GMT', '12:20'),
+('BA', 'JFK', 'LHR', 112, '6:30 PM EST', '6:30 AM GMT', '7:00'),
+('BA', 'LAX', 'LHR', 282, '3:30 PM PST', '10:10 AM GMT', '10:40'),
+('BA', 'LHR', 'AMS', 444, '8:15 PM GMT', '10:35 PM CEST', '1:20'),
+('BA', 'LHR', 'ATL', 227, '4:00 PM GMT', '8:15 PM EST', '9:15'),
+('BA', 'LHR', 'CDG', 316, '2:35 PM GMT', '4:55 PM CEST', '1:20'),
+('BA', 'LHR', 'HND', 7, '11:40 AM GMT', '7:10 AM JST', '11:30'),
+('BA', 'LHR', 'JFK', 177, '1:10 PM GMT', '4:00 PM EST', '7:50'),
+('BA', 'LHR', 'LAX', 281, '11:30 AM GMT', '2:50 PM PST', '11:20'),
+('BA', 'LHR', 'ORD', 297, '4:05 PM GMT', '6:45 PM CST', '8:40'),
+('BA', 'LHR', 'PEK', 39, '4:30 PM GMT', '9:30 AM CST', '10:00'),
+('BA', 'ORD', 'LHR', 296, '8:55 PM CST', '10:40 AM GMT', '7:45'),
+('BA', 'PEK', 'LHR', 38, '11:15 AM CST', '3:30 PM GMT', '11:15'),
+('CZ', 'AMS', 'PEK', 346, '2:40 PM CEST', '6:15 AM CST', '9:35'),
+('CZ', 'PEK', 'AMS', 345, '12:30 AM CST', '5:30 AM CEST', '11:00'),
+('DL', 'AMS', 'ATL', 73, '10:35 AM CEST', '2:21 PM EST', '9:46'),
+('DL', 'AMS', 'JFK', 49, '10:55 AM CEST', '1:16 PM EST', '8:21'),
+('DL', 'ATL', 'AMS', 70, '3:05 PM EST', '5:55 AM CEST', '8:50'),
+('DL', 'ATL', 'CDG', 82, '3:15 PM EST', '6:00 AM CEST', '8:45'),
+('DL', 'ATL', 'JFK', 752, '12:06 PM EST', '2:28 PM EST', '2:22'),
+('DL', 'ATL', 'LAX', 1218, '5:40 PM EST', '7:30 PM PST', '4:50'),
+('DL', 'ATL', 'LHR', 30, '5:53 PM EST', '7:20 AM GMT', '8:27'),
+('DL', 'ATL', 'ORD', 972, '10:25 AM EST', '11:29 AM CST', '2:04'),
+('DL', 'CDG', 'ATL', 85, '3:20 PM CEST', '7:01 PM EST', '9:41'),
+('DL', 'CDG', 'JFK', 405, '10:20 AM CEST', '12:42 PM EST', '8:22'),
+('DL', 'HND', 'LAX', 6, '3:15 PM JST', '9:06 AM PST', '9:41'),
+('DL', 'JFK', 'AMS', 48, '7:33 PM EST', '9:15 AM CEST', '7:42'),
+('DL', 'JFK', 'ATL', 453, '11:35 AM EST', '2:11 PM EST', '2:36'),
+('DL', 'JFK', 'CDG', 404, '5:44 PM EST', '7:20 AM CEST', '7:36'),
+('DL', 'JFK', 'LAX', 400, '3:30 PM EST', '6:48 PM PST', '6:18'),
+('DL', 'JFK', 'LHR', 402, '10:45 PM EST', '10:50 AM GMT', '7:05'),
+('DL', 'JFK', 'ORD', 4083, '4:15 PM EST', '6:05 PM CST', '2:50'),
+('DL', 'LAX', 'ATL', 1354, '10:15 PM PST', '5:28 AM EST', '4:13'),
+('DL', 'LAX', 'HND', 7, '10:56 AM PST', '2:35 PM JST', '11:39'),
+('DL', 'LAX', 'JFK', 1908, '10:45 PM PST', '7:20 AM EST', '5:35'),
+('DL', 'LHR', 'ATL', 33, '2:05 PM GMT', '6:30 PM EST', '9:25'),
+('DL', 'LHR', 'JFK', 1, '10:30 AM GMT', '1:25 PM EST', '7:55'),
+('DL', 'ORD', 'ATL', 393, '1:20 PM CST', '4:22 PM EST', '2:02'),
+('DL', 'ORD', 'JFK', 5334, '12:00 PM CST', '3:19 PM EST', '2:19'),
+('HU', 'ORD', 'PEK', 498, '3:20 PM CST', '6:05 PM CST', '13:45'),
+('HU', 'PEK', 'ORD', 497, '1:40 PM CST', '1:20 PM CST', '12:40'),
+('JL', 'CDG', 'HND', 46, '8:30 PM CEST', '3:25 PM JST', '12:55'),
+('JL', 'HND', 'CDG', 45, '10:40 AM JST', '4:15 PM CEST', '12:35'),
+('JL', 'HND', 'LHR', 43, '11:20 AM JST', '3:50 PM GMT', '12:30'),
+('JL', 'HND', 'PEK', 25, '4:50 PM JST', '7:45 PM CST', '3:55'),
+('JL', 'LHR', 'HND', 42, '9:30 AM GMT', '5:15 AM JST', '11:45'),
+('JL', 'PEK', 'HND', 22, '4:30 PM CST', '9:05 PM JST', '3:35'),
+('B6', 'JFK', 'LAX', 423, '10:30 AM EST', '1:39 PM PST', '6:09'),
+('B6', 'JFK', 'ORD', 105, '3:53 PM EST', '5:50 PM CST', '2:57'),
+('B6', 'LAX', 'JFK', 2024, '12:30 AM PST', '9:01 AM EST', '5:31'),
+('B6', 'ORD', 'JFK', 906, '10:44 AM CST', '1:59 PM EST', '2:15'),
+('KL', 'AMS', 'ATL', 621, '5:00 PM CEST', '8:20 PM EST', '9:20'),
+('KL', 'AMS', 'CDG', 1229, '8:00 AM CEST', '9:25 AM CEST', '1:25'),
+('KL', 'AMS', 'JFK', 643, '5:55 PM CEST', '7:59 PM EST', '8:04'),
+('KL', 'AMS', 'LAX', 601, '9:55 AM CEST', '11:50 AM PST', '10:55'),
+('KL', 'AMS', 'LHR', 1021, '3:55 PM CEST', '4:15 PM GMT', '1:20'),
+('KL', 'AMS', 'ORD', 611, '12:25 PM CEST', '1:55 PM CST', '8:30'),
+('KL', 'AMS', 'PEK', 897, '5:25 PM CEST', '8:55 AM CST', '9:30'),
+('KL', 'ATL', 'AMS', 622, '10:35 PM EST', '12:55 PM CEST', '8:20'),
+('KL', 'CDG', 'AMS', 1234, '2:30 PM CEST', '3:50 PM CEST', '1:20'),
+('KL', 'JFK', 'AMS', 644, '10:15 PM EST', '11:35 AM CEST', '7:20'),
+('KL', 'LAX', 'AMS', 602, '1:40 PM PST', '9:00 AM CEST', '10:20'),
+('KL', 'LHR', 'AMS', 1024, '6:35 PM GMT', '8:50 PM CEST', '1:15'),
+('KL', 'ORD', 'AMS', 612, '4:00 PM CST', '6:45 AM CEST', '7:45'),
+('KL', 'PEK', 'AMS', 898, '10:55 AM CST', '3:20 PM CEST', '10:25'),
+('DY', 'CDG', 'LAX', 7097, '3:40 PM CEST', '6:00 PM PST', '11:20'),
+('DY', 'LAX', 'CDG', 7098, '8:00 PM PST', '3:30 PM CEST', '10:30'),
+('WN', 'ATL', 'LAX', 232, '10:50 AM EST', '12:50 PM PST', '5:00'),
+('WN', 'LAX', 'ATL', 233, '1:45 PM PST', '9:20 PM EST', '4:35'),
+('NK', 'ATL', 'LAX', 404, '11:58 AM EST', '1:53 PM PST', '4:55'),
+('NK', 'ATL', 'ORD', 672, '7:59 PM EST', '9:10 PM CST', '2:11'),
+('NK', 'LAX', 'ATL', 403, '10:59 AM PST', '6:20 PM EST', '4:21'),
+('NK', 'LAX', 'ORD', 730, '9:23 AM PST', '3:34 PM CST', '4:11'),
+('NK', 'ORD', 'ATL', 221, '4:26 PM CST', '7:27 PM EST', '2:01'),
+('NK', 'ORD', 'LAX', 731, '5:05 PM CST', '7:27 PM PST', '4:22'),
+('UA', 'AMS', 'ORD', 908, '11:00 AM CEST', '1:00 PM CST', '9:00'),
+('UA', 'CDG', 'ORD', 986, '11:15 AM CEST', '1:40 PM CST', '9:25'),
+('UA', 'LAX', 'LHR', 923, '5:50 PM PST', '12:20 PM GMT', '10:30'),
+('UA', 'LAX', 'ORD', 660, '11:20 PM PST', '5:19 AM CST', '3:59'),
+('UA', 'LHR', 'LAX', 935, '2:10 PM GMT', '5:10 PM PST', '11:00'),
+('UA', 'LHR', 'ORD', 959, '2:50 PM GMT', '5:50 PM CST', '9:00'),
+('UA', 'ORD', 'AMS', 909, '5:55 PM CST', '9:20 AM CEST', '8:25'),
+('UA', 'ORD', 'CDG', 987, '6:25 PM CST', '9:30 AM CEST', '8:05'),
+('UA', 'ORD', 'LAX', 310, '11:35 AM CST', '2:02 PM PST', '4:27'),
+('UA', 'ORD', 'LHR', 958, '4:00 PM CST', '5:55 AM GMT', '7:55'),
+('UA', 'ORD', 'PEK', 851, '12:45 PM CST', '3:15 PM CST', '13:30'),
+('UA', 'PEK', 'ORD', 850, '12:00 PM CST', '12:10 PM CST', '13:10'),
+('VS', 'JFK', 'LHR', 138, '8:30 PM EST', '8:45 AM GMT', '7:15'),
+('VS', 'LAX', 'LHR', 24, '8:45 PM PST', '3:00 PM GMT', '10:15'),
+('VS', 'LHR', 'JFK', 45, '2:30 PM GMT', '5:15 PM EST', '7:45'),
+('VS', 'LHR', 'LAX', 141, '12:35 PM GMT', '3:45 PM PST', '11:10'),
+('SE', 'CDG', 'JFK', 10, '7:25 PM CEST', '9:25 PM EST', '8:00'),
+('SE', 'JFK', 'CDG', 21, '11:55 PM EST', '1:00 PM CEST', '7:05');
+
+
+--
+-- Dump Data into 'Destinatio' Table
+--
+INSERT INTO Destination (airline, destination) VALUES
+('AA', 'ATL'),
+('AA', 'CDG'),
+('AA', 'HND'),
+('AA', 'JFK'),
+('AA', 'LAX'),
+('AA', 'LHR'),
+('AA', 'ORD'),
+('AA', 'PEK'),
+('AF', 'AMS'),
+('AF', 'ATL'),
+('AF', 'CDG'),
+('AF', 'HND'),
+('AF', 'JFK'),
+('AF', 'LAX'),
+('AF', 'LHR'),
+('AF', 'ORD'),
+('AF', 'PEK'),
+('AS', 'JFK'),
+('AS', 'LAX'),
+('AS', 'ORD'),
+('B6', 'JFK'),
+('B6', 'LAX'),
+('B6', 'ORD'),
+('BA', 'AMS'),
+('BA', 'ATL'),
+('BA', 'CDG'),
+('BA', 'HND'),
+('BA', 'JFK'),
+('BA', 'LAX'),
+('BA', 'LHR'),
+('BA', 'ORD'),
+('BA', 'PEK'),
+('CA', 'CDG'),
+('CA', 'HND'),
+('CA', 'JFK'),
+('CA', 'LAX'),
+('CA', 'LHR'),
+('CA', 'PEK'),
+('CZ', 'AMS'),
+('CZ', 'PEK'),
+('DL', 'AMS'),
+('DL', 'ATL'),
+('DL', 'CDG'),
+('DL', 'HND'),
+('DL', 'JFK'),
+('DL', 'LAX'),
+('DL', 'LHR'),
+('DL', 'ORD'),
+('DY', 'CDG'),
+('DY', 'LAX'),
+('HU', 'ORD'),
+('HU', 'PEK'),
+('JL', 'CDG'),
+('JL', 'HND'),
+('JL', 'LHR'),
+('JL', 'PEK'),
+('KL', 'AMS'),
+('KL', 'ATL'),
+('KL', 'CDG'),
+('KL', 'JFK'),
+('KL', 'LAX'),
+('KL', 'LHR'),
+('KL', 'ORD'),
+('KL', 'PEK'),
+('NH', 'CDG'),
+('NH', 'HND'),
+('NH', 'LAX'),
+('NH', 'LHR'),
+('NH', 'PEK'),
+('NK', 'ATL'),
+('NK', 'LAX'),
+('NK', 'ORD'),
+('NZ', 'LAX'),
+('NZ', 'LHR'),
+('SE', 'CDG'),
+('SE', 'JFK'),
+('TN', 'CDG'),
+('TN', 'LAX'),
+('UA', 'AMS'),
+('UA', 'CDG'),
+('UA', 'LAX'),
+('UA', 'LHR'),
+('UA', 'ORD'),
+('UA', 'PEK'),
+('VS', 'JFK'),
+('VS', 'LAX'),
+('VS', 'LHR'),
+('WN', 'ATL'),
+('WN', 'LAX');
